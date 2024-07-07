@@ -1,144 +1,82 @@
-from tkinter import*
+from tkinter import *
 import math
 
-def ButtonClick(symbol):
-    global operator
-    operator= operator+ str(symbol)
-    display_text.delete(0, "end")
-    display_text.insert(0, operator)
-    
-def ButtonPercentage():
-    global operator
-    try:
-        result = str(eval(operator) / 100)
-        input_value.set(result)
-        operator = ""
-    except:
-        input_value.set("Error")
-        operator = ""
+class Calculator:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Calculator")
+        self.root.configure(bg='black')
         
-def  ButtonClear():
-    global operator
-    operator= ""
-    input_value.set("")
-    
-def ButtonEquals():
-    global operator
-    try:
-        operator = str(eval(operator))
-        display_text.delete(0, "end")
-        display_text.insert(0, operator)
-    
-    except:
-        ButtonClear()
-        display_text.insert(0, "Error")
-      
-def ButtonDelete():
-    global operator
-    operator = operator[:-1]
-    input_value.set(operator)
-    
-def ButtonExponent():
-    global operator
-    try:
-        result = math.exp(float(operator))
-        operator = str(result)
-        input_value.set(operator)
-    except ValueError:
-        input_value.set("Error")
+        self.operator = ""
+        self.input_value = StringVar()
         
-root =Tk()
-root.title("Calculator")
-root.configure(bg='black')
-operator = ""
-input_value = StringVar()
+        self.create_widgets()
+        
+    def create_widgets(self):
+        button_bg = 'black'
+        button_fg = 'white'
+        button_active_bg = '#071739'
+        button_active_fg = 'white'
+        
+        self.display_text = Entry(self.root, font=("Arial", 20, "bold"), textvariable=self.input_value, bd=0, insertwidth=4, bg='dark gray', fg=button_fg, justify="right")
+        self.display_text.grid(row=0, column=0, columnspan=4, ipadx=8, ipady=25, pady=15, padx=15, sticky="nsew")
 
-button_bg = 'black'
-button_fg = 'white'
-button_active_bg = '#071739'
-button_active_fg = 'white'
+        buttons = [
+            ('C', self.clear, 1, 0), ('%', self.percentage, 1, 1), ('<', self.delete, 1, 2), ('/', lambda: self.click("/"), 1, 3),
+            ('7', lambda: self.click(7), 2, 0), ('8', lambda: self.click(8), 2, 1), ('9', lambda: self.click(9), 2, 2), ('+', lambda: self.click("+"), 2, 3),
+            ('4', lambda: self.click(4), 3, 0), ('5', lambda: self.click(5), 3, 1), ('6', lambda: self.click(6), 3, 2), ('-', lambda: self.click("-"), 3, 3),
+            ('1', lambda: self.click(1), 4, 0), ('2', lambda: self.click(2), 4, 1), ('3', lambda: self.click(3), 4, 2), ('*', lambda: self.click("*"), 4, 3),
+            ('0', lambda: self.click(0), 5, 0), ('e', self.exponent, 5, 1), ('=', self.equals, 5, 2, 2)
+        ]
 
-display_text = Entry(root, font=("Arial", 20, "bold"), textvariable=input_value, bd=0, insertwidth=4, bg='dark gray', fg= button_fg, justify="right")
-display_text.grid(row=0, column=0, columnspan=4, ipadx=8, ipady=25, pady=15, padx=15, sticky="nsew")
+        for (text, command, row, column, *span) in buttons:
+            Button(self.root, text=text, command=command, width=4, bd=8, font=("Arial", 20, "bold"), bg=button_bg, fg=button_fg,
+                   activebackground=button_active_bg, activeforeground=button_active_fg).grid(row=row, column=column, columnspan=span[0] if span else 1, sticky="nsew")
 
-# For Row 1
-btn_clear = Button(root, width=4, bd=8, bg=button_bg, fg=button_fg , font=("Arial", 20, "bold"), text="C", command=ButtonClear,
-                      activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_clear.grid(row=1, column=0)
+    def click(self, symbol):
+        self.operator += str(symbol)
+        self.update_display(self.operator)
 
-btn_per = Button(root, width=4, bd=8, font=("Arial", 20, "bold"), text="%", bg=button_bg, fg="white", command=ButtonPercentage,
-                       activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_per.grid(row=1, column= 1)
+    def percentage(self):
+        try:
+            result = str(eval(self.operator) / 100)
+            self.update_display(result)
+            self.operator = result
+        except:
+            self.update_display("Error")
+            self.operator = ""
+        
+    def clear(self):
+        self.operator = ""
+        self.update_display("")
 
-btn_del = Button(root, width=4, bd=8, bg=button_bg, fg=button_fg, font=("Arial", 20, "bold"), text="<", command=ButtonDelete,
-                    activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_del.grid(row=1, column=2)
+    def equals(self):
+        try:
+            result = str(eval(self.operator))
+            self.update_display(result)
+            self.operator = result
+        except:
+            self.clear()
+            self.update_display("Error")
 
-btn_div = Button(root, padx=16,width=3, bd=8,bg=button_bg, fg=button_fg, font=("Arial", 20, "bold"), text="/", command=lambda: ButtonClick("/"),
-                    activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_div.grid(row=1, column=3)
+    def delete(self):
+        self.operator = self.operator[:-1]
+        self.update_display(self.operator)
+    
+    def exponent(self):
+        try:
+            result = str(math.exp(float(self.operator)))
+            self.update_display(result)
+            self.operator = result
+        except ValueError:
+            self.update_display("Error")
 
-# For Row 2
-btn_7 = Button(root, padx=16, bd=8, fg=button_fg, font=("Arial", 20, "bold"), text="7", bg=button_bg, command=lambda: ButtonClick(7),
-                  activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_7.grid(row=2, column=0)
+    def update_display(self, value):
+        self.display_text.delete(0, "end")
+        self.display_text.insert(0, value)
 
-btn_8 = Button(root, padx=16, bd=8, fg=button_fg, font=("Arial", 20, "bold"), text="8", bg=button_bg, command=lambda: ButtonClick(8),
-                  activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_8.grid(row=2, column=1)
-btn_9 = Button(root, padx=16, bd=8, fg=button_fg, font=("Arial", 20, "bold"), text="9", bg=button_bg, command=lambda: ButtonClick(9),
-                  activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_9.grid(row=2, column=2)
 
-btn_add = Button(root, padx=16,width=3, bd=8, bg=button_bg, fg=button_fg, font=("Arial", 20, "bold"), text="+", command=lambda: ButtonClick("+"),
-                    activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_add.grid(row=2, column=3)
-
-# For Row 3
-btn_4 = Button(root, padx=16, bd=8, fg=button_fg, font=("Arial", 20, "bold"), text="4", bg=button_bg, command=lambda: ButtonClick(4),
-                  activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_4.grid(row=3, column=0)
-
-btn_5 = Button(root, padx=16, bd=8, fg=button_fg, font=("Arial", 20, "bold"), text="5", bg=button_bg, command=lambda: ButtonClick(5),
-                  activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_5.grid(row=3, column=1)
-
-btn_6 = Button(root, padx=16, bd=8, fg=button_fg, font=("Arial", 20, "bold"), text="6", bg=button_bg, command=lambda: ButtonClick(6),
-                  activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_6.grid(row=3, column=2)
-
-btn_sub = Button(root, padx=16, width=3,bd=8, bg=button_bg, fg=button_fg, font=("Arial", 20, "bold"), text="-", command=lambda: ButtonClick("-"),
-                    activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_sub.grid(row=3, column=3)
-
-# For Row 4
-btn_1 = Button(root, padx=16, bd=8, fg=button_fg, font=("Arial", 20, "bold"), text="1", bg=button_bg, command=lambda: ButtonClick(1),
-                  activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_1.grid(row=4, column=0)
-
-btn_2 = Button(root, padx=16, bd=8, fg=button_fg, font=("Arial", 20, "bold"), text="2", bg=button_bg, command=lambda: ButtonClick(2),
-                  activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_2.grid(row=4, column=1)
-
-btn_3 = Button(root, padx=16, bd=8, fg=button_fg, font=("Arial", 20, "bold"), text="3", bg=button_bg, command=lambda: ButtonClick(3),
-                  activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_3.grid(row=4, column=2)
-
-btn_mul = Button(root, padx=16, width=3,bd=8, bg=button_bg, fg=button_fg, font=("Arial", 20, "bold"), text="*", command=lambda: ButtonClick("*"),
-                    activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_mul.grid(row=4, column=3)
-
-# For Row 5
-btn_0 = Button(root, padx=16, bd=8, fg=button_fg, font=("Arial", 20, "bold"), text="0", bg=button_bg, command=lambda: ButtonClick(0),
-                  activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_0.grid(row=5, column=0)
-
-btn_exp = Button(root, padx=16, bd=8, fg=button_fg, font=("Arial", 20, "bold"), text="e", bg=button_bg, command=ButtonExponent,
-                    activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_exp.grid(row=5, column=1)
-
-btn_equals = Button(root, padx=16,width=8, bd=8, font=("Arial", 20, "bold"), text="=", bg=button_bg, fg=button_fg, command=ButtonEquals,
-                       activebackground=button_active_bg, activeforeground=button_active_fg)
-btn_equals.grid(row=5, column=2, columnspan= 2)
-
-root.mainloop()
+if __name__ == "__main__":
+    root = Tk()
+    calc = Calculator(root)
+    root.mainloop()
