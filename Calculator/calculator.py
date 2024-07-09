@@ -18,7 +18,7 @@ class Calculator:
         button_active_bg = '#071739'
         button_active_fg = 'white'
         
-        self.display_text = Entry(self.root, font=("Arial", 20, "bold"), textvariable=self.input_value, bd=0, insertwidth=4, bg='dark gray', fg=button_fg, justify="right")
+        self.display_text = Entry(self.root, font=("Arial", 20, "bold"), textvariable=self.input_value, bd=0, insertwidth=4, bg='dark gray', fg='black', justify="right")
         self.display_text.grid(row=0, column=0, columnspan=4, ipadx=8, ipady=25, pady=15, padx=15, sticky="nsew")
 
         buttons = [
