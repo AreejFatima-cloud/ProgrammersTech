@@ -1,101 +1,115 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk,messagebox
+from PIL import Image, ImageTk
 import random
+import time
 from quiz_data import quiz_data
-# Quiz data - questions and answers
 
 class QuizApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Quiz Game")
-        self.root.geometry("600x400")
+        self.root.geometry("800x600")
+
+        # Load background image
+        self.background_image = Image.open("quiz.PNG")
+        self.background_image = self.background_image.resize((800, 600), Image.LANCZOS)
+        self.background_photo = ImageTk.PhotoImage(self.background_image)
+
+        # Create a label to hold the background image
+        self.background_label = tk.Label(self.root, image=self.background_photo)
+        self.background_label.place(relwidth=1, relheight=1)
 
         self.score = 0
         self.current_question = 0
+
+        # Timer variables
+        self.start_time = None
+        self.end_time = None
 
         self.create_widgets()
 
         self.show_welcome_message()
 
     def create_widgets(self):
-        self.question_label = ttk.Label(self.root, text="", wraplength=500, font=("Helvetica", 16))
-        self.question_label.pack(pady=20)
+        # Create a label for the question text
+        self.question_label = tk.Label(self.root, text="", wraplength=500, font=("Helvetica", 16), bg="#00032F", fg="white")
+        self.question_label.place(x=150, y=50, width=500, height=50)
 
-        self.answers_frame = ttk.Frame(self.root)
-        self.answers_frame.pack(pady=20)
+        # Create a frame for the answer buttons
+        self.answers_frame = tk.Frame(self.root, bg="#00032F")
+        self.answers_frame.place(x=150, y=150, width=300, height=200)
 
-        self.feedback_label = ttk.Label(self.root, text="", font=("Helvetica", 12))
-        self.feedback_label.pack(pady=10)
+        self.answer_buttons = []
+        for i in range(4):
+            btn = ttk.Button(self.answers_frame, command=lambda i=i: self.check_answer(i))
+            btn.pack(fill='x', pady=5)
+            self.answer_buttons.append(btn)
 
+        # Create a label for feedback
+        self.feedback_label = tk.Label(self.root, text="", font=("Helvetica", 12), bg="#00032F", fg="white")
+        self.feedback_label.place(x=150, y=350, width=300, height=30)
+
+        # Create a button for the next question
         self.next_button = ttk.Button(self.root, text="Next", command=self.next_question, state=tk.DISABLED)
-        self.next_button.pack(pady=10)
+        self.next_button.place(x=250, y=400, width=100, height=30)
 
     def show_welcome_message(self):
-        messagebox.showinfo("Welcome to the Quiz Game",
-                            "Welcome to the Quiz Game!\n\nRules:\n1. You will be asked multiple-choice questions.\n2. Select the correct answer.\n3. Your score will be displayed at the end.\n\nClick OK to start the quiz.")
-        self.load_question()
+        tk.messagebox.showinfo("Welcome", "Welcome to the Quiz Game!\nYou will be asked multiple-choice questions. Good luck!")
+        self.start_time = time.time()
+        self.show_question()
 
-    def load_question(self):
-        if self.current_question < len(quiz_data):
-            question_data = quiz_data[self.current_question]
-            question = question_data["question"]
-            answers = question_data["answers"]
+    def show_question(self):
+        question = quiz_data[self.current_question]
+        self.question_label.config(text=question["question"])
+        random.shuffle(question["answers"])
+        for i, answer in enumerate(question["answers"]):
+            self.answer_buttons[i].config(text=answer, state=tk.NORMAL)
+        self.feedback_label.config(text="")
+        self.next_button.config(state=tk.DISABLED)
 
-            self.question_label.config(text=question)
-
-            # Clear previous answers
-            for widget in self.answers_frame.winfo_children():
-                widget.destroy()
-
-            # Shuffle answers
-            random.shuffle(answers)
-
-            # Create answer buttons
-            for answer in answers:
-                answer_button = ttk.Button(self.answers_frame, text=answer,
-                                           command=lambda ans=answer: self.check_answer(ans, question_data["correct_answer"]))
-                answer_button.pack(pady=5)
-
-            # Disable next button initially
-            self.next_button.config(state=tk.DISABLED)
-            self.feedback_label.config(text="")
-        else:
-            self.display_result()
-
-    def check_answer(self, selected_answer, correct_answer):
-        if selected_answer == correct_answer:
+    def check_answer(self, index):
+        question = quiz_data[self.current_question]
+        selected_answer = self.answer_buttons[index].cget("text")
+        if selected_answer == question["correct_answer"]:
             self.score += 1
-            self.feedback_label.config(text="Correct!", foreground="green")
+            self.feedback_label.config(text="Correct!", fg="green")
         else:
-            self.feedback_label.config(text=f"Incorrect! Correct answer is: {correct_answer}", foreground="red")
+            self.feedback_label.config(text=f"Incorrect! The correct answer is {question['correct_answer']}.", fg="red")
 
-        # Disable answer buttons after selection
-        for widget in self.answers_frame.winfo_children():
-            widget.config(state=tk.DISABLED)
-
-        # Enable next button
+        for btn in self.answer_buttons:
+            btn.config(state=tk.DISABLED)
         self.next_button.config(state=tk.NORMAL)
 
     def next_question(self):
         self.current_question += 1
-        self.load_question()
-
-    def display_result(self):
-        messagebox.showinfo("Quiz Completed", f"Quiz Completed!\nYour score: {self.score}/{len(quiz_data)}")
-
-        # Ask if the user wants to play again
-        if messagebox.askyesno("Play Again?", "Do you want to play again?"):
-            self.score = 0
-            self.current_question = 0
-            self.load_question()
+        if self.current_question < len(quiz_data):
+            self.show_question()
         else:
-            self.root.quit()
+            self.end_time = time.time()
+            total_time = self.end_time - self.start_time
+            self.show_final_score(total_time)
 
-# Main function to start the quiz
-def main():
-    root = tk.Tk()
-    app = QuizApp(root)
-    root.mainloop()
+    def show_final_score(self, total_time):
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Quiz Completed")
+        dialog.geometry("300x200")
 
-if __name__ == "__main__":
-    main()
+        tk.Label(dialog, text=f"Final Score: {self.score}/{len(quiz_data)}\nTime taken: {total_time:.2f} seconds", font=("Helvetica", 12)).pack(pady=20)
+
+        play_again_button = ttk.Button(dialog, text="Play Again", command=lambda: [dialog.destroy(), self.reset_quiz()])
+        play_again_button.pack(side="left", padx=20, pady=20)
+
+        exit_button = ttk.Button(dialog, text="Exit", command=self.root.quit)
+        exit_button.pack(side="right", padx=20, pady=20)
+
+    def reset_quiz(self):
+        self.score = 0
+        self.current_question = 0
+        self.start_time = time.time()
+        self.show_question()
+
+# Main
+root = tk.Tk()
+app = QuizApp(root)
+root.mainloop()
