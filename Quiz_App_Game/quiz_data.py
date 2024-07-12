@@ -1,63 +1,89 @@
 # Sample data for the quizzes
 quiz_data = [
+    # General Knowledge
     {
         "question": "What is the capital of France?",
-        "answers": ["Paris", "London", "Berlin", "Madrid"],
+        "answers": ["Paris", "London", "Berlin", "Rome"],
         "correct_answer": "Paris"
     },
     {
-        "question":"What is the largest planet in our solar system?",
-        "answers":["Jupiter","Saturn", "Mercury", "Earth"],
-        "correct_answer":"Jupiter"
+        "question": "Who wrote 'Romeo and Juliet'?",
+        "answers": ["William Shakespeare", "Charles Dickens", "Jane Austen", "Leo Tolstoy"],
+        "correct_answer": "William Shakespeare"
     },
     {
-        "question":"What is the symbol of Potassium?",
-        "answers":["Ag","Au", "Po", "K"],
-        "correct_answer":"K"
+        "question": "What is the largest planet in our solar system?",
+        "answers": ["Jupiter", "Saturn", "Neptune", "Mars"],
+        "correct_answer": "Jupiter"
     },
     {
-        "question":"Which country is known as the 'Land of the Rising Sun'?",
-        "answers":["Japan","Singapore", "Korea", "Thailand"],
-        "correct_answer":"Japan"
+        "question": "In which year did the Titanic sink?",
+        "answers": ["1912", "1910", "1915", "1920"],
+        "correct_answer": "1912"
+    },
+    # Islamic
+    {
+        "question": "Who was the first prophet in Islam?",
+        "answers": ["Adam", "Ibrahim", "Musa", "Nuh"],
+        "correct_answer": "Adam"
     },
     {
-        "question": "Who wrote 'To Kill a Mockingbird'?",
-        "answers": ["Harper Lee", "Mark Twain", "Ernest Hemingway", "J.K. Rowling"],
-        "correct_answer": "Harper Lee"
-    },
-    {
-        "question": "What is 5 * 6?",
-        "answers": ["11", "30", "28", "26"],
-        "correct_answer": "30"
-    },
-    {
-        "question": "What is 15 / 3?",
-        "answers": ["3", "5", "6", "7"],
-        "correct_answer": "5"
-    },
-    {
-        "question": "What is 2 + 2?",
-        "answers": ["3", "4", "5", "6"],
-        "correct_answer": "4"
-    },
-    {
-        "question": "What is the square root of 81?",
-        "answers": ["7", "8", "9", "10"],
-        "correct_answer": "9"
-    },
-    {
-        "question": "What is the holy book of Islam?",
-        "answers": ["Bible", "Torah", "Quran", "Vedas"],
+        "question": "Which holy book was revealed to Prophet Muhammad?",
+        "answers": ["Quran", "Torah", "Bible", "Psalms"],
         "correct_answer": "Quran"
     },
     {
-        "question": "Who is the last prophet in Islam?",
-        "answers": ["Moses", "Jesus", "Muhammad", "Abraham"],
-        "correct_answer": "Muhammad"
+        "question": "How many times a day do Muslims pray?",
+        "answers": ["Five", "Three", "Four", "Six"],
+        "correct_answer": "Five"
     },
     {
-        "question": "How many pillars of Islam are there?",
-        "answers": ["3", "4", "5", "6"],
+        "question": "In which city was Prophet Muhammad born?",
+        "answers": ["Mecca", "Medina", "Jerusalem", "Baghdad"],
+        "correct_answer": "Mecca"
+    },
+    # Math
+    {
+        "question": "What is 5 + 7?",
+        "answers": ["12", "10", "11", "13"],
+        "correct_answer": "12"
+    },
+    {
+        "question": "What is the square root of 64?",
+        "answers": ["8", "6", "7", "9"],
+        "correct_answer": "8"
+    },
+    {
+        "question": "What is 15 / 3?",
+        "answers": ["5", "4", "6", "3"],
         "correct_answer": "5"
+    },
+    {
+        "question": "What is 7 * 6?",
+        "answers": ["42", "36", "48", "40"],
+        "correct_answer": "42"
+    },
+    # Science
+    {
+        "question": "What is the chemical symbol for water?",
+        "answers": ["H2O", "O2", "CO2", "NaCl"],
+        "correct_answer": "H2O"
+    },
+    {
+        
+        "question": "What planet is known as the Red Planet?",
+        "answers": ["Mars", "Venus", "Jupiter", "Saturn"],
+        "correct_answer": "Mars"
+    },
+    {
+        
+        "question": "What is the speed of light?",
+        "answers": ["299,792,458 meters per second", "150,000,000 meters per second", "300,000,000 meters per second", "299,000,000 meters per second"],
+        "correct_answer": "299,792,458 meters per second"
+    },
+    {
+        "question": "What is the hardest natural substance on Earth?",
+        "answers": ["Diamond", "Gold", "Iron", "Graphite"],
+        "correct_answer": "Diamond"
     }
 ]
